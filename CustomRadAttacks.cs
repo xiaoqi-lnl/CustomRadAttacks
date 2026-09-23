@@ -132,7 +132,7 @@ namespace CustomRadAttacks
                     "启用",
                     new[] { "Off", "On" },
                     Conflicted
-                        ? "⚠ 检测到抢占招式选择的 mod，已自动禁用（名字见 ModLog）"
+                        ? "⚠ 检测到抢占招式选择的 mod\n已自动禁用，名字见 ModLog"
                         : "总开关：关掉时全部交还原版辐光",
                     value => { Settings.Enabled = value == 1; SaveSettings(); },
                     () => Settings.Enabled ? 1 : 0),
@@ -165,13 +165,13 @@ namespace CustomRadAttacks
             list.Add(new IMenuMod.MenuEntry(
                 "P2 瞬移允许重复",
                 new[] { "Off", "On" },
-                "On = 去掉原版「不连续去同一个点」的限制",
+                "On = 允许连续去同一个点\nOff = 原版防重复限制",
                 value => { Settings.TeleportAllowRepeat = value == 1; SaveSettings(); },
                 () => Settings.TeleportAllowRepeat ? 1 : 0));
             list.Add(new IMenuMod.MenuEntry(
                 "P2 瞬移锁死点",
                 BuildTeleportOptions(),
-                "选一个点则辐光每次瞬移都去那里（与「允许重复」叠加，都关 = 原版）",
+                "选一个点 = 每次瞬移都去该点\n与「允许重复」可叠加\n都关 = 原版随机",
                 value => { Settings.LockedTelePos = value; SaveSettings(); },
                 () => Settings.LockedTelePos < 0 || Settings.LockedTelePos > 10 ? 0 : Settings.LockedTelePos));
             return list;
