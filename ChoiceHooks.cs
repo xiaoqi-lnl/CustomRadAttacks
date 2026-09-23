@@ -29,10 +29,11 @@ namespace CustomRadAttacks
             if (!TryPhase(self, out phase)) { orig(self); return; }
 
             CustomRadAttacksSettings s = CustomRadAttacks.Settings;
-            if (!s.Enabled || s.Mode == ChoiceMode.Random) { _pendingDir = 0; orig(self); return; }
+            ChoiceMode mode = phase == RadPhase.P1 ? s.ModeA1 : s.ModeA2;
+            if (!s.Enabled || mode == ChoiceMode.Random) { _pendingDir = 0; orig(self); return; }
 
             AttackDef def;
-            if (s.Mode == ChoiceMode.LockSingle)
+            if (mode == ChoiceMode.LockSingle)
             {
                 def = AttackCatalog.Find(phase == RadPhase.P1 ? s.LockedA1 : s.LockedA2);
             }

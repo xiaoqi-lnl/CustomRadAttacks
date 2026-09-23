@@ -22,7 +22,8 @@ namespace CustomRadAttacks
         public override void Initialize(Dictionary<string, Dictionary<string, UnityEngine.GameObject>> preloadedObjects)
         {
             CheckConflicts();
-            Log("CustomRadAttacks v" + GetVersion() + " init, enabled=" + Settings.Enabled + ", mode=" + Settings.Mode
+            Log("CustomRadAttacks v" + GetVersion() + " init, enabled=" + Settings.Enabled
+                + ", modeA1=" + Settings.ModeA1 + ", modeA2=" + Settings.ModeA2
                 + ", conflicted=" + Conflicted);
             On.HutongGames.PlayMaker.Actions.SendRandomEventV3.OnEnter += ChoiceHooks.HookChoice;
             On.HutongGames.PlayMaker.Actions.SendRandomEvent.OnEnter += ChoiceHooks.HookNailLr;
@@ -131,47 +132,51 @@ namespace CustomRadAttacks
                 new IMenuMod.MenuEntry(
                     "启用",
                     new[] { "Off", "On" },
-                    Conflicted
-                        ? "⚠ 检测到抢占招式选择的 mod\n已自动禁用，名字见 ModLog"
-                        : "总开关：关掉时全部交还原版辐光",
+                    "",
                     value => { Settings.Enabled = value == 1; SaveSettings(); },
                     () => Settings.Enabled ? 1 : 0),
                 new IMenuMod.MenuEntry(
-                    "模式",
+                    "P1 配置",
                     new[] { "随机（原版）", "锁单招", "锁序列" },
-                    "随机 = 完全原版；\n锁单招 = 每轮都出指定的那一招；\n锁序列 = 按 8 个槽位逐轮出",
-                    value => { Settings.Mode = (ChoiceMode)value; SaveSettings(); },
-                    () => (int)Settings.Mode),
+                    "",
+                    value => { Settings.ModeA1 = (ChoiceMode)value; SaveSettings(); },
+                    () => (int)Settings.ModeA1),
+                new IMenuMod.MenuEntry(
+                    "P2 配置",
+                    new[] { "随机（原版）", "锁单招", "锁序列" },
+                    "",
+                    value => { Settings.ModeA2 = (ChoiceMode)value; SaveSettings(); },
+                    () => (int)Settings.ModeA2),
                 new IMenuMod.MenuEntry(
                     "P1 锁定招",
                     AttackCatalog.NamesFor(RadPhase.P1),
-                    "只在「锁单招」模式下生效",
+                    "仅 P1 配置=锁单招时生效",
                     value => { Settings.LockedA1 = AttackCatalog.NamesFor(RadPhase.P1)[value]; SaveSettings(); },
                     () => IndexOf(AttackCatalog.NamesFor(RadPhase.P1), Settings.LockedA1)),
                 new IMenuMod.MenuEntry(
                     "P2 锁定招",
                     AttackCatalog.NamesFor(RadPhase.P2),
-                    "只在「锁单招」模式下生效",
+                    "仅 P2 配置=锁单招时生效",
                     value => { Settings.LockedA2 = AttackCatalog.NamesFor(RadPhase.P2)[value]; SaveSettings(); },
                     () => IndexOf(AttackCatalog.NamesFor(RadPhase.P2), Settings.LockedA2)),
                 new IMenuMod.MenuEntry(
-                    "走完循环",
+                    "轮播序列",
                     new[] { "Off（走完交还原版）", "On（8 槽轮播）" },
-                    "只在「锁序列」模式下生效",
+                    "",
                     value => { Settings.LoopSequence = value == 1; SaveSettings(); },
                     () => Settings.LoopSequence ? 1 : 0)
             };
             list.AddRange(SlotEntries());
             list.Add(new IMenuMod.MenuEntry(
-                "P2 瞬移允许重复",
+                "允许相同瞬移点",
                 new[] { "Off", "On" },
-                "On = 允许连续去同一个点\nOff = 原版防重复限制",
+                "",
                 value => { Settings.TeleportAllowRepeat = value == 1; SaveSettings(); },
                 () => Settings.TeleportAllowRepeat ? 1 : 0));
             list.Add(new IMenuMod.MenuEntry(
-                "P2 瞬移锁死点",
+                "指定 P2 瞬移点位",
                 BuildTeleportOptions(),
-                "选一个点 = 每次瞬移都去该点\n与「允许重复」可叠加\n都关 = 原版随机",
+                "",
                 value => { Settings.LockedTelePos = value; SaveSettings(); },
                 () => Settings.LockedTelePos < 0 || Settings.LockedTelePos > 10 ? 0 : Settings.LockedTelePos));
             return list;
@@ -194,7 +199,7 @@ namespace CustomRadAttacks
                 yield return new IMenuMod.MenuEntry(
                     "槽位 " + (slot + 1),
                     options,
-                    "空 = 这一槽跳过（不算一轮）",
+                    "留空则跳到下个槽位",
                     value => { Settings.Slots[slot] = options[value] == AttackCatalog.Empty ? null : options[value]; SaveSettings(); },
                     () => IndexOf(options, Settings.Slots[slot] ?? AttackCatalog.Empty));
             }

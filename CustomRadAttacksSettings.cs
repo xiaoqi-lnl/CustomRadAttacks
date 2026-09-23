@@ -10,7 +10,9 @@ namespace CustomRadAttacks
         // 总开关：关掉时所有钩子全部委托原版
         public bool Enabled = true;
 
-        public ChoiceMode Mode = ChoiceMode.Random;
+        // 模式：P1 / P2 各自独立选（随机 / 锁单招 / 锁序列）
+        public ChoiceMode ModeA1 = ChoiceMode.Random;
+        public ChoiceMode ModeA2 = ChoiceMode.Random;
 
         // 锁单招：P1 / P2 各一个下拉（两阶段招池不同，见 design §12）
         public string LockedA1 = "脸刺";
