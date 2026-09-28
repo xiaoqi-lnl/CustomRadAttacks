@@ -42,8 +42,8 @@ namespace CustomRadAttacks
             new AttackDef("左横刺", "NAIL L SWEEP",   "NAIL LR SWEEP", -1),
             new AttackDef("右横刺", "NAIL R SWEEP",   "NAIL LR SWEEP",  1),
             new AttackDef("脸激光", "EYE BEAMS",      "EYE BEAMS"),
-            new AttackDef("左光墙", "BEAM SWEEP L",   "BEAM SWEEP L"),
-            new AttackDef("右光墙", "BEAM SWEEP R",   "BEAM SWEEP R"),
+            new AttackDef("右光墙", "BEAM SWEEP L",   "BEAM SWEEP L"),
+            new AttackDef("左光墙", "BEAM SWEEP R",   "BEAM SWEEP R"),
             new AttackDef("脸刺",   "NAIL FAN",       "NAIL FAN"),
             new AttackDef("光球",   "ORBS",           "ORBS"),
         };
