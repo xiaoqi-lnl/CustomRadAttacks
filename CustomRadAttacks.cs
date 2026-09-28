@@ -25,6 +25,7 @@ namespace CustomRadAttacks
             Log("CustomRadAttacks v" + GetVersion() + " init, enabled=" + Settings.Enabled
                 + ", modeA1=" + Settings.ModeA1 + ", modeA2=" + Settings.ModeA2
                 + ", conflicted=" + Conflicted);
+            On.HutongGames.PlayMaker.Actions.Wait.OnEnter += ChoiceHooks.HookFightStart;
             On.HutongGames.PlayMaker.Actions.SendRandomEventV3.OnEnter += ChoiceHooks.HookChoice;
             On.HutongGames.PlayMaker.Actions.SendRandomEvent.OnEnter += ChoiceHooks.HookNailLr;
             On.HutongGames.PlayMaker.Actions.SendRandomEvent.OnEnter += ChoiceHooks.HookTeleport;
@@ -139,13 +140,13 @@ namespace CustomRadAttacks
                     "P1 配置",
                     new[] { "随机（原版）", "锁单招", "锁序列" },
                     "",
-                    value => { Settings.ModeA1 = (ChoiceMode)value; SaveSettings(); },
+                    value => { Settings.ModeA1 = (ChoiceMode)value; SaveSettings(); ResetIfSequenced(Settings.ModeA1); },
                     () => (int)Settings.ModeA1),
                 new IMenuMod.MenuEntry(
                     "P2 配置",
                     new[] { "随机（原版）", "锁单招", "锁序列" },
                     "",
-                    value => { Settings.ModeA2 = (ChoiceMode)value; SaveSettings(); },
+                    value => { Settings.ModeA2 = (ChoiceMode)value; SaveSettings(); ResetIfSequenced(Settings.ModeA2); },
                     () => (int)Settings.ModeA2),
                 new IMenuMod.MenuEntry(
                     "P1 锁定招",
@@ -180,6 +181,13 @@ namespace CustomRadAttacks
                 value => { Settings.LockedTelePos = value; SaveSettings(); },
                 () => Settings.LockedTelePos < 0 || Settings.LockedTelePos > 10 ? 0 : Settings.LockedTelePos));
             return list;
+        }
+
+        // 菜单回调只在选项真的变了时才触发，所以「停留原地再选一次锁序列」不会归零；
+        // 值变成锁序列就重置（切走再切回来也算）。随机 / 锁单招不动指针。
+        private static void ResetIfSequenced(ChoiceMode mode)
+        {
+            if (mode == ChoiceMode.LockSequenced) ChoiceHooks.ResetSequence();
         }
 
         private static string[] BuildTeleportOptions()

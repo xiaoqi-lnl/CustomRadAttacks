@@ -93,6 +93,20 @@ namespace CustomRadAttacks.Tests
             Check(seq7.Next(RadPhase.P1).Chinese == "剑雨", "LoadSlots 轮1 = 剑雨");
             Check(seq7.Next(RadPhase.P1).Chinese == "光球", "LoadSlots 轮2 = 光球（null/空 都跳过）");
             Check(seq7.Next(RadPhase.P1) == null, "LoadSlots 轮3 = null");
+
+            // Reset()：指针回槽 1，槽位内容不动
+            var seq8 = new AttackSequence();
+            seq8.Loop = false;
+            seq8.SetSlot(0, "剑雨");
+            seq8.SetSlot(1, "脸刺");
+            seq8.SetSlot(2, "光球");
+            Check(seq8.Next(RadPhase.P1).Chinese == "剑雨", "Reset 前 轮1 = 剑雨");
+            Check(seq8.Next(RadPhase.P1).Chinese == "脸刺", "Reset 前 轮2 = 脸刺");
+            Check(seq8.Pointer == 2, "Reset 前指针 = 2");
+            seq8.Reset();
+            Check(seq8.Pointer == 0, "Reset 后指针 = 0");
+            Check(seq8.Next(RadPhase.P1).Chinese == "剑雨", "Reset 后重新从槽 1 起 = 剑雨");
+            Check(seq8.SlotAt(2) == "光球", "Reset 不动槽位内容");
         }
 
         private static void CatalogTests()

@@ -29,6 +29,13 @@ namespace CustomRadAttacks
             _slots[index] = string.IsNullOrEmpty(chineseName) ? AttackCatalog.Empty : chineseName;
         }
 
+        // 回到「从槽 1 开始」的初始状态；槽位内容不动
+        public void Reset()
+        {
+            _pointer = 0;
+            _hasPhase = false;
+        }
+
         // 从设置整体灌入，指针不动
         public void LoadSlots(string[] names)
         {

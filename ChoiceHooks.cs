@@ -12,6 +12,9 @@ namespace CustomRadAttacks
 
         private static readonly AttackSequence Sequence = new AttackSequence();
 
+        // 供菜单使用：把序列打回槽 1
+        internal static void ResetSequence() { Sequence.Reset(); }
+
         // 本轮强制招在 P2 的方向：0 不强制 / -1 左 / +1 右（供 L or R Choice 取用）
         private static int _pendingDir;
 
@@ -51,6 +54,20 @@ namespace CustomRadAttacks
 
             // 不调 orig：原版随机被完全抑制（SendRandomEventV3 的防重复计数也随之冻住，切回随机后自行恢复）
             Send(fsm, evt);
+        }
+
+        // 「这一局刚开打」的信号：A1 Pause 在 Attack Choices 里只有 Idle --ARENA 1 START--> 一条入边，
+        // 全局转移也只有 A1 End / A2 End，不会中途回到 Idle。所以每次辐光出场它必过、且只过一次。
+        internal static void HookFightStart(On.HutongGames.PlayMaker.Actions.Wait.orig_OnEnter orig,
+                                            Wait self)
+        {
+            Fsm fsm = self.Fsm;
+            if (fsm != null && fsm.Name == ChoicesFsmName && fsm.GameObjectName == RadianceGoName)
+            {
+                string st = self.State != null ? self.State.Name : fsm.ActiveStateName;
+                if (st == "A1 Pause") Sequence.Reset();
+            }
+            orig(self);
         }
 
         // 阶段只认状态名，不认 HP —— AnyRadiance 2 会整体改血量阈值（design §7.2）
